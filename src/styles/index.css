@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+@import './tokens.css';
+@import './utilities.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01' on, 'cv11' on;
+    background:
+      radial-gradient(
+        900px 420px at 12% -8%,
+        color-mix(in oklab, var(--color-brand) 10%, transparent),
+        transparent 55%
+      ),
+      radial-gradient(
+        700px 360px at 100% 0%,
+        color-mix(in oklab, var(--color-brand) 6%, transparent),
+        transparent 50%
+      ),
+      var(--color-canvas);
+    color: var(--color-fg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand) 22%, white);
+    color: var(--color-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+}

@@ -1,0 +1,1 @@
+export { fetchDepartments } from './departmentService';

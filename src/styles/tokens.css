@@ -1,0 +1,110 @@
+@theme {
+  --font-sans: 'Plus Jakarta Sans', 'IBM Plex Sans KR', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'IBM Plex Sans KR', ui-sans-serif, system-ui, sans-serif;
+
+  --color-canvas: var(--ds-canvas);
+  --color-surface: var(--ds-surface);
+  --color-surface-muted: var(--ds-surface-muted);
+  --color-fg: var(--ds-fg);
+  --color-fg-muted: var(--ds-fg-muted);
+  --color-fg-subtle: var(--ds-fg-subtle);
+  --color-border: var(--ds-border);
+  --color-border-strong: var(--ds-border-strong);
+  --color-brand: var(--ds-brand);
+  --color-brand-hover: var(--ds-brand-hover);
+  --color-brand-soft: var(--ds-brand-soft);
+  --color-brand-fg: var(--ds-brand-fg);
+  --color-sidebar: var(--ds-sidebar);
+  --color-sidebar-fg: var(--ds-sidebar-fg);
+  --color-sidebar-muted: var(--ds-sidebar-muted);
+  --color-sidebar-active: var(--ds-sidebar-active);
+  --color-success: var(--ds-success);
+  --color-warning: var(--ds-warning);
+  --color-danger: var(--ds-danger);
+
+  --shadow-xs: var(--ds-shadow-xs);
+  --shadow-sm: var(--ds-shadow-sm);
+  --shadow-md: var(--ds-shadow-md);
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Canvas & surface — bright SaaS whites / cool grays */
+  --ds-canvas: #f5f8fc;
+  --ds-surface: #ffffff;
+  --ds-surface-muted: #f1f5f9;
+
+  /* Typography */
+  --ds-fg: #0f172a;
+  --ds-fg-muted: #475569;
+  --ds-fg-subtle: #94a3b8;
+
+  /* Lines */
+  --ds-border: #e2e8f0;
+  --ds-border-strong: #cbd5e1;
+
+  /* Brand blue — trustworthy, not Bootstrap primary */
+  --ds-brand: #2563eb;
+  --ds-brand-hover: #1d4ed8;
+  --ds-brand-soft: #eff6ff;
+  --ds-brand-fg: #ffffff;
+
+  /* Light sidebar (modern SaaS) */
+  --ds-sidebar: #ffffff;
+  --ds-sidebar-fg: #0f172a;
+  --ds-sidebar-muted: #64748b;
+  --ds-sidebar-active: #eff6ff;
+
+  /* Feedback */
+  --ds-success: #059669;
+  --ds-warning: #d97706;
+  --ds-danger: #dc2626;
+
+  /* Elevation — soft, diffuse */
+  --ds-shadow-xs: 0 1px 2px rgb(15 23 42 / 0.04);
+  --ds-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 12px rgb(15 23 42 / 0.04);
+  --ds-shadow-md: 0 4px 6px rgb(15 23 42 / 0.03), 0 12px 32px rgb(15 23 42 / 0.06);
+
+  /* Motion */
+  --ds-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ds-duration: 180ms;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --ds-canvas: #0b1220;
+  --ds-surface: #111827;
+  --ds-surface-muted: #1e293b;
+
+  --ds-fg: #f8fafc;
+  --ds-fg-muted: #94a3b8;
+  --ds-fg-subtle: #64748b;
+
+  --ds-border: #1f2a3d;
+  --ds-border-strong: #334155;
+
+  --ds-brand: #60a5fa;
+  --ds-brand-hover: #93c5fd;
+  --ds-brand-soft: #172554;
+  --ds-brand-fg: #0b1220;
+
+  --ds-sidebar: #0f172a;
+  --ds-sidebar-fg: #f8fafc;
+  --ds-sidebar-muted: #94a3b8;
+  --ds-sidebar-active: #1e3a5f;
+
+  --ds-success: #34d399;
+  --ds-warning: #fbbf24;
+  --ds-danger: #f87171;
+
+  --ds-shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35);
+  --ds-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.28);
+  --ds-shadow-md: 0 8px 16px rgb(0 0 0 / 0.35), 0 20px 40px rgb(0 0 0 / 0.3);
+}

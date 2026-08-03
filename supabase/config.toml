@@ -1,0 +1,6 @@
+# Soft cancel keeps history for email audit / calendar filters
+[functions.send-reservation-email]
+verify_jwt = true
+
+[functions.send-reservation-reminders]
+verify_jwt = false
