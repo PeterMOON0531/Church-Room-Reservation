@@ -26,9 +26,13 @@ type ReservationCalendarProps = {
   rooms: Room[];
   loading?: boolean;
   usingMockData?: boolean;
+  currentUserId?: string | null;
+  canManageAll?: boolean;
   onMove: (id: string, startAt: string, endAt: string) => Promise<{
     error: Error | null;
   }>;
+  onEdit?: (reservation: Reservation) => void;
+  onCancelReservation?: (reservation: Reservation) => Promise<void> | void;
 };
 
 function getInitialView(): CalendarView {
@@ -41,13 +45,18 @@ export function ReservationCalendar({
   rooms,
   loading = false,
   usingMockData = false,
+  currentUserId = null,
+  canManageAll = false,
   onMove,
+  onEdit,
+  onCancelReservation,
 }: ReservationCalendarProps) {
   const [view, setView] = useState<CalendarView>(getInitialView);
   const [cursor, setCursor] = useState(() => startOfDay(new Date()));
   const [selected, setSelected] = useState<Reservation | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [moveError, setMoveError] = useState<string | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -132,6 +141,10 @@ export function ReservationCalendar({
     else setCursor((current) => addDays(current, 1));
   };
 
+  const canManageReservation = (reservation: Reservation) =>
+    canManageAll ||
+    (currentUserId != null && reservation.user_id === currentUserId);
+
   const openDetail = (reservation: Reservation) => {
     setSelected(reservation);
     setDetailOpen(true);
@@ -140,6 +153,12 @@ export function ReservationCalendar({
 
   const handleMove = async (id: string, startAt: string, endAt: string) => {
     setMoveError(null);
+    const target = reservations.find((item) => item.id === id);
+    if (!target) return;
+    if (!canManageReservation(target)) {
+      setMoveError('본인 예약만 시간을 변경할 수 있습니다.');
+      return;
+    }
     const result = await onMove(id, startAt, endAt);
     if (result.error) {
       setMoveError(result.error.message);
@@ -149,6 +168,10 @@ export function ReservationCalendar({
   const handleMonthDrop = async (reservationId: string, day: Date) => {
     const target = reservations.find((item) => item.id === reservationId);
     if (!target) return;
+    if (!canManageReservation(target)) {
+      setMoveError('본인 예약만 이동할 수 있습니다.');
+      return;
+    }
 
     const nextStart = new Date(target.start_at);
     nextStart.setFullYear(day.getFullYear(), day.getMonth(), day.getDate());
@@ -312,6 +335,46 @@ export function ReservationCalendar({
         reservation={selected}
         open={detailOpen}
         onClose={() => setDetailOpen(false)}
+        canManage={Boolean(
+          selected &&
+            (canManageAll ||
+              (currentUserId != null && selected.user_id === currentUserId)),
+        )}
+        showContactDetails={Boolean(
+          selected &&
+            (canManageAll ||
+              (currentUserId != null && selected.user_id === currentUserId)),
+        )}
+        busy={actionBusy}
+        onEdit={
+          onEdit
+            ? (reservation) => {
+                setDetailOpen(false);
+                onEdit(reservation);
+              }
+            : undefined
+        }
+        onCancelReservation={
+          onCancelReservation
+            ? async (reservation) => {
+                if (
+                  !window.confirm(
+                    '이 예약을 취소하시겠습니까? 취소 후 달력에서 사라집니다.',
+                  )
+                ) {
+                  return;
+                }
+                setActionBusy(true);
+                try {
+                  await onCancelReservation(reservation);
+                  setDetailOpen(false);
+                  setSelected(null);
+                } finally {
+                  setActionBusy(false);
+                }
+              }
+            : undefined
+        }
       />
     </div>
   );

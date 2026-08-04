@@ -1,10 +1,35 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { AUTH_REMEMBER_ME_KEY, DEMO_AUTH_KEY } from '../constants';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+function isUsableSupabaseUrl(value: string | undefined): value is string {
+  if (!value) return false;
+  if (value.includes('your-project')) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === 'https:' || parsed.protocol === 'http:';
+  } catch {
+    return false;
+  }
+}
 
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+/** Project URL only — never include /auth/v1 or other paths. */
+function normalizeSupabaseUrl(value: string): string {
+  const parsed = new URL(value.trim().replace(/^["']|["']$/g, ''));
+  return `${parsed.protocol}//${parsed.host}`;
+}
+
+const rawSupabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim().replace(
+  /^["']|["']$/g,
+  '',
+);
+const supabaseUrl = isUsableSupabaseUrl(rawSupabaseUrl)
+  ? normalizeSupabaseUrl(rawSupabaseUrl)
+  : undefined;
+
+export const isSupabaseConfigured = Boolean(
+  supabaseUrl && supabaseAnonKey && supabaseAnonKey !== 'your-anon-key',
+);
 export const isDemoAllowed =
   import.meta.env.DEV && !isSupabaseConfigured;
 
@@ -57,16 +82,21 @@ function createAuthStorage(): Storage {
 }
 
 function createSupabaseClient(): SupabaseClient | null {
-  if (!isSupabaseConfigured) return null;
+  if (!isSupabaseConfigured || !supabaseUrl || !supabaseAnonKey) return null;
 
-  return createClient(supabaseUrl!, supabaseAnonKey!, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      storage: createAuthStorage(),
-    },
-  });
+  try {
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: createAuthStorage(),
+      },
+    });
+  } catch (error) {
+    console.error('Supabase client init failed', error);
+    return null;
+  }
 }
 
 export const supabase = createSupabaseClient();

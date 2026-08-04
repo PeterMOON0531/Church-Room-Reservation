@@ -7,16 +7,29 @@ type ReservationDetailModalProps = {
   reservation: Reservation | null;
   open: boolean;
   onClose: () => void;
+  canManage?: boolean;
+  showContactDetails?: boolean;
+  onEdit?: (reservation: Reservation) => void;
+  onCancelReservation?: (reservation: Reservation) => void;
+  busy?: boolean;
 };
 
 export function ReservationDetailModal({
   reservation,
   open,
   onClose,
+  canManage = false,
+  showContactDetails = false,
+  onEdit,
+  onCancelReservation,
+  busy = false,
 }: ReservationDetailModalProps) {
   if (!reservation) return null;
 
   const color = getRoomColor(reservation.room_id);
+  const canCancel =
+    canManage &&
+    (reservation.status === 'pending' || reservation.status === 'approved');
 
   return (
     <Modal
@@ -25,9 +38,29 @@ export function ReservationDetailModal({
       title={reservation.title || reservation.purpose || '예약 상세'}
       description="선택한 예약의 상세 정보입니다."
       footer={
-        <Button variant="secondary" onClick={onClose}>
-          닫기
-        </Button>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button variant="secondary" onClick={onClose} disabled={busy}>
+            닫기
+          </Button>
+          {canManage && onEdit ? (
+            <Button
+              variant="secondary"
+              disabled={busy}
+              onClick={() => onEdit(reservation)}
+            >
+              수정
+            </Button>
+          ) : null}
+          {canCancel && onCancelReservation ? (
+            <Button
+              disabled={busy}
+              className="bg-[var(--color-danger)] text-white hover:opacity-90"
+              onClick={() => onCancelReservation(reservation)}
+            >
+              예약 취소
+            </Button>
+          ) : null}
+        </div>
       }
     >
       <div className="space-y-4">
@@ -74,7 +107,7 @@ export function ReservationDetailModal({
           <div>
             <dt className="text-[var(--color-fg-subtle)]">전화번호</dt>
             <dd className="mt-0.5 font-medium text-[var(--color-fg)]">
-              {reservation.contact_phone ?? '-'}
+              {showContactDetails ? reservation.contact_phone ?? '-' : '비공개'}
             </dd>
           </div>
           <div>

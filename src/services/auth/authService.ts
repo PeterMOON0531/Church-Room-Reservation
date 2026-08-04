@@ -52,8 +52,13 @@ export async function requestPasswordReset(email: string) {
     return { error: new Error('Supabase가 설정되지 않았습니다.') };
   }
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}${AUTH_ROUTES.resetPassword}`,
+  const redirectTo = new URL(
+    AUTH_ROUTES.resetPassword,
+    window.location.origin,
+  ).toString();
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+    redirectTo,
   });
 
   return { error };
